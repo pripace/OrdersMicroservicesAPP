@@ -1,0 +1,93 @@
+﻿@page "/products"
+@using ClientWeb.DTOs
+@using ClientWeb.Services
+@attribute [StreamRendering]
+@inject ClientWeb.Services.IProductService ProductService
+@rendermode InteractiveServer
+
+<PageTitle>Productos</PageTitle>
+
+<h1>Productos</h1>
+
+
+@if ( products == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Agregar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prod in products)
+            {
+                <tr>
+                    <td>@prod.Id</td>
+                    <td>@prod.Name</td>
+                    <td>@prod.Description</td>
+                    <td>@prod.Price</td>
+                    <td>@prod.Stock</td>
+                    <td>@prod.Counter</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="prod.IncrementCount">Agregar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+  //  <button class="btn btn-primary" @onclick="FinishOrder">Finalizar compra</button>
+
+}
+
+@code {
+    private List<ProductItemDto>? products = new List<ProductItemDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        var response = await ProductService.GetProductsAsync();
+
+        foreach (var item in response)
+        {
+            products.Add(new ProductItemDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Description = item.Description,
+                    Price = item.Price,
+                    Stock = item.Stock
+                });
+        }
+    }
+
+   // private void FinishOrder()
+ //   {
+   //     ProductService.CreateOrder(products); //verificar
+  //  }
+
+    private class ProductItemDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+
+        public int Counter { get; set; } = 0;
+
+        public void IncrementCount()
+        {
+            Counter++;
+        }
+    }
+}

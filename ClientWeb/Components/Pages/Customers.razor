@@ -1,0 +1,72 @@
+﻿@page "/customers"
+@attribute [StreamRendering]
+@inject ClientWeb.Services.ICustomerService CustomerService
+@using ClientWeb.DTOs
+@using ClientWeb.Services
+
+<PageTitle>Customers</PageTitle>
+
+<h1>Clientes</h1>
+
+@if (customers == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Dirección</th>
+                <th>Fecha de Registro</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cust in customers)
+            {
+                <tr>
+                    <td>@cust.Id</td>
+                    <td>@cust.Name</td>
+                    <td>@cust.Email</td>
+                    <td>@cust.Address</td>
+                    <td>@cust.RegistrationDate.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<CustomerSingleDto>? customers = new List<CustomerSingleDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        var response = await CustomerService.GetAllCustomersAsync();
+
+        foreach (var customer in response)
+        {
+            customers.Add(new CustomerSingleDto
+                {
+                    Id = customer.Id,
+                    Name = customer.Name,
+                    Email = customer.Email,
+                    Address = customer.Address,
+                    RegistrationDate = customer.RegistrationDate
+                });
+        }
+    }
+
+    private class CustomerSingleDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public DateTime RegistrationDate { get; set; }
+    }
+}
