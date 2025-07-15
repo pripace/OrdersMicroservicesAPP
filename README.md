@@ -1,6 +1,6 @@
 OrdersMicroservicesApp
 
-Proyecto de ejemplo con ASP.NET Core 8, Entity Framework Core, y Blazor Server.
+Proyecto con ASP.NET Core 8, Entity Framework Core, y Blazor Server.
 
 ✅ Funcionalidades
 
